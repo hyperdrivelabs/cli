@@ -79,6 +79,9 @@ class Resource(base.Resource):
         self._deletion = cast(Optional[str], None)
 
     def __getitem__(self, item: str):
+        if self._type == "AWS::CloudFormation::CustomResource":
+            if item not in self._attrs:
+                return types.Attr[types.Str, item](self.id)  # type: ignore
         return self._attrs[item]
 
     @property
