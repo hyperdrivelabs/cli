@@ -153,6 +153,8 @@ def _display(
     click.secho("\nPlan summary\n", fg="magenta")
     click.echo(_format_base(_prune(tree, set(state.keys())), state))
     logs = _logs(tree, state)
+    if logs:
+        click.echo()
     for log in logs:
         LOGGER.error(log)
     if logs:
@@ -316,7 +318,7 @@ def _animate(
         logs = _logs(tree, state)
         if logs:
             data.append(("title", "\n\nLogs\n\n"))
-            data.extend(logs)
+            data.append("\n".join(logs))
         widget.set_text(data)
         async_loop.call_later(1, _update, widget_ref)
 
