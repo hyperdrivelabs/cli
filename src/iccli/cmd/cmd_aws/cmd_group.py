@@ -37,6 +37,36 @@ class AliasedGroup(click.Group):
             return super().get_command(ctx, ALIASES[cmd_name])
         return None
 
+    def format_commands(self, ctx, formatter):
+        rows = []
+
+        sub_commands = self.list_commands(ctx)
+
+        limit = formatter.width - 6 - max(len(sub_cmd[0]) for sub_cmd in sub_commands)
+
+        for sub_command in sub_commands:
+            command = self.get_command(ctx, sub_command)
+            if command is None:
+                continue
+            if hasattr(command, 'hidden') and command.hidden:
+                continue
+
+            inverted_aliases = dict()
+            for key, value in ALIASES.items():
+                inverted_aliases.setdefault(value, list()).append(key)
+
+            if sub_command in inverted_aliases:
+                vals = inverted_aliases[sub_command]
+                sub_command = f'{sub_command} {{{", ".join(vals)}}}'
+
+            cmd_help = command.get_short_help_str(limit)
+
+            rows.append((sub_command, cmd_help))
+
+        if rows:
+            with formatter.section('Commands'):
+                formatter.write_dl(rows)
+
 
 @click.group(name="aws", cls=AliasedGroup)
 @click.option("--profile", help="AWS profile to use.")
