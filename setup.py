@@ -38,7 +38,7 @@ class build_py(setuptools.command.build_py.build_py):
 
 setuptools.setup(
     name="iccli",
-    version="0.3.0",
+    version="0.3.1",
     license="AGPL-3.0-only",
     description="compose, share, and deploy cloud infrastructure bricks",
     long_description_content_type="text/markdown",
